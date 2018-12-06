@@ -9,12 +9,14 @@ All of the queries use parameters when necessary and also using prepared command
 
 ## How do you use it?
 
-There are 4 basic methods:
+There are 6 basic methods:
 
 * Take(string table)
 * Update(string table, KeyValuePair<string, object> setValue)
 * Insert(string table, KeyValuePair<string, object>[] insertValues)
 * Delete(string table)
+* CreateTable(string table, params KeyValuePair<string, object>[] columnTypes)
+* DropTable(string table)
 
 You have to use one of those methods first on the PostgreSQLConnection object.  Then if you want, you can juice your queries/commands up with one of the other methods:
 
@@ -37,7 +39,7 @@ There are unit tests set up in NUnit for this but currently they are based off m
 
 ## To do
 
-* Add function to create table for using for unit tests
+* ~Add function to create table for using for unit tests~
 * Make error handling more robust (rn barely catching anything)
 * Make Where accept a list of strings so you can do "where column like 'whatever'" and stuff like that
 * Make an "Or" function for use with Where so you can use Or instead of and - where column = 'whatever' or column = 'anything'"
