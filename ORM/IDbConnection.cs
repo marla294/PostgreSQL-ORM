@@ -11,6 +11,8 @@ namespace ORM
         PostgreSQLConnection Insert(string table, KeyValuePair<string, object>[] insertValues);
         PostgreSQLConnection Update(string table, KeyValuePair<string, object> setValue);
         PostgreSQLConnection Delete(string table);
+        PostgreSQLConnection DropTable(string table);
+        PostgreSQLConnection CreateTable(string table, params KeyValuePair<string, object>[] columnTypes);
     }
 }
 

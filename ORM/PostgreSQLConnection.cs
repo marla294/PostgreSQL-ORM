@@ -37,7 +37,6 @@ namespace ORM
         // Starting place
         public PostgreSQLConnection Take(string table)
         {
-            ResetFields();
             IsQuery = true;
 
             var sql = $"select * from {table}";
@@ -83,9 +82,6 @@ namespace ORM
         // Starting place
         public PostgreSQLConnection Insert(string table, params KeyValuePair<string, object>[] insertValues)
         {
-            ResetFields();
-            IsQuery = false;
-
             var columns = $"{insertValues[0].Key}";
             var values = new List<object> { insertValues[0].Value };
             var parameters = "@parameter1";
@@ -111,9 +107,6 @@ namespace ORM
         // Starting place
         public PostgreSQLConnection Update(string table, KeyValuePair<string, object> setValue)
         {
-            ResetFields();
-            IsQuery = false;
-
             SQL = $"update {table} set {setValue.Key} = @parameter1";
             Parameters.Add(0, setValue.Value);
 
@@ -123,10 +116,41 @@ namespace ORM
         // Starting place
         public PostgreSQLConnection Delete(string table)
         {
-            ResetFields();
-            IsQuery = false;
-
             SQL = $"delete from {table}";
+
+            return this;
+        }
+
+        // Starting place
+        public PostgreSQLConnection CreateTable(string table, params KeyValuePair<string, object>[] columnTypes)
+        {
+            var result = Take("information_schema.tables").Where(Pairing.Of("table_name", $"{table}")).Execute();
+
+            if (result[0].Count == 0)
+            {
+                SQL = $"create table {table}();" +
+                      $" alter table {table} add column id bigserial primary key;";
+
+                foreach (var columnType in columnTypes)
+                {
+                    SQL = SQL + $" alter table {table} add column {columnType.Key} {columnType.Value.ToString()};";
+                }
+            }
+
+            return this;
+        }
+
+        // Starting place
+        public PostgreSQLConnection DropTable(string table)
+        {
+            var result = Take("information_schema.tables").Where(Pairing.Of("table_name", $"{table}")).Execute();
+
+            // Table is in the database so we can delete it
+            if (result[0].Count > 0)
+            {
+                SQL = $"drop table {table}";
+                IsQuery = false;
+            }
 
             return this;
         }
@@ -162,6 +186,8 @@ namespace ORM
                 }
 
                 connection.Close();
+
+                ResetFields();
 
                 return results;
             }
@@ -210,4 +236,3 @@ namespace ORM
         }
     }
 }
-
