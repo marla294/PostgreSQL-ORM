@@ -24,13 +24,13 @@ namespace ORM
 
         void CreateTestTable()
         {
-            Db.CreateTable("test", Pairing.Of("name", "text")).Execute();
+            Db.CreateTable("test", Pairing.Of("name", "text"), Pairing.Of("age", "int")).Execute();
 
-            Db.Insert("test", Pairing.Of("name", "Marla")).Execute();
-            Db.Insert("test", Pairing.Of("name", "Susan")).Execute();
-            Db.Insert("test", Pairing.Of("name", "John")).Execute();
-            Db.Insert("test", Pairing.Of("name", "Jenna")).Execute();
-            Db.Insert("test", Pairing.Of("name", "RJ")).Execute();
+            Db.Insert("test", Pairing.Of("name", "Marla"), Pairing.Of("age", 36)).Execute();
+            Db.Insert("test", Pairing.Of("name", "Susan"), Pairing.Of("age", 100)).Execute();
+            Db.Insert("test", Pairing.Of("name", "John"), Pairing.Of("age", 67)).Execute();
+            Db.Insert("test", Pairing.Of("name", "Jenna"), Pairing.Of("age", 34)).Execute();
+            Db.Insert("test", Pairing.Of("name", "RJ"), Pairing.Of("age", 29)).Execute();
         }
 
         [Test]
@@ -71,6 +71,12 @@ namespace ORM
         public void TestWhere()
         {
             var results = Db.Take("test").Where(Pairing.Of("name", "Susan"), Pairing.Of("id", 2)).Execute();
+
+            Assert.IsNotNull(results);
+            Assert.AreEqual(1, results[0].Count);
+            Assert.AreEqual("Susan", results[1][0]);
+
+            results = Db.Take("test").Where(Pairing.Of("age", 100)).Execute();
 
             Assert.IsNotNull(results);
             Assert.AreEqual(1, results[0].Count);
