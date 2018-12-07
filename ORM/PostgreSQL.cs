@@ -108,41 +108,45 @@ namespace ORM
         [Test]
         public void TestInsert()
         {
-            Db.Insert("test", Pairing.Of("name", "Graydon")).Execute();
+            Db.Insert("test", Pairing.Of("name", "Bob")).Execute();
 
-            var results = Db.Take("test").Where(Pairing.Of("name", "Graydon")).Execute();
+            var results = Db.Take("test").Where(Pairing.Of("name", "Bob")).Execute();
 
             Assert.IsNotNull(results);
-            Assert.AreEqual("Graydon", results[1][0]);
+            Assert.AreEqual("Bob", results[1][0]);
             Assert.AreEqual(1, results[0].Count);
 
-            Db.Delete("test").Where(Pairing.Of("name", "Graydon")).Execute();
+            Db.Delete("test").Where(Pairing.Of("name", "Bob")).Execute();
         }
 
         [Test]
         public void TestUpdate()
         {
-            Db.Insert("test", Pairing.Of("name", "Graydon")).Execute();
-            Db.Update("test", Pairing.Of("name", "Graydon Update")).Where(Pairing.Of("name", "Graydon")).Execute();
+            Db.Insert("test", Pairing.Of("name", "Bob")).Execute();
+            Db.Update("test", Pairing.Of("name", "Bob Update")).Where(Pairing.Of("name", "Bob")).Execute();
 
-            var results = Db.Take("test").Where(Pairing.Of("name", "Graydon Update")).Execute();
+            var results = Db.Take("test").Where(Pairing.Of("name", "Bob Update")).Execute();
 
             Assert.IsNotNull(results);
-            Assert.AreEqual("Graydon Update", results[1][0]);
+            Assert.AreEqual("Bob Update", results[1][0]);
             Assert.AreEqual(1, results[0].Count);
 
-            Db.Delete("test").Where(Pairing.Of("name", "Graydon Update")).Execute();
+            Db.Delete("test").Where(Pairing.Of("name", "Bob Update")).Execute();
         }
 
         [Test]
         public void TestDelete()
         {
-            Db.Insert("test", Pairing.Of("name", "Graydon")).Execute();
-            Db.Delete("test").Where(Pairing.Of("name", "Graydon")).Execute();
+            Db.Insert("test", Pairing.Of("name", "Bob")).Execute();
+            Db.Delete("test").Where(Pairing.Of("name", "Bob")).Execute();
 
-            var results = Db.Take("test").Where(Pairing.Of("name", "Graydon")).Execute();
+            var results1 = Db.Take("test").Where(Pairing.Of("name", "Bob")).Execute();
+            var results2 = Db.Take("test").Execute();
 
-            Assert.AreEqual(0, results[0].Count);
+            Assert.AreEqual(0, results1[0].Count);
+            Assert.AreEqual(5, results2[0].Count);
+            Assert.AreEqual("Marla", results2[1].Find(name => name == "Marla"));
+            Assert.AreEqual(-1, results2[1].FindIndex(name => name == "Bob"));
         }
 
         [Test]
